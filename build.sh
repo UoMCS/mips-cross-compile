@@ -83,6 +83,52 @@ build_binutils()
   make install
 }
 
+build_glibc_pass_one()
+{
+  local pkg_name="glibc"
+  local compression="xz"
+  local filename="${pkg_name}-${XC_GLIBC_VERSION}.tar.${compression}"
+  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
+  local build_path="${XC_BUILD_DIR}/build-${pkg_name}"
+  local src_file="${XC_BUILD_DIR}/${filename}"
+  local src_relative_path="${pkg_name}-${XC_GLIBC_VERSION}"
+  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+
+  local configure_options=(
+    "--prefix=${XC_PREFIX}/${XC_TARGET}"
+    "--build=$MACHTYPE"
+    "--host=${XC_TARGET}"
+    "--target=${XC_TARGET}"
+    "--with-headers=${XC_PREFIX}/${XC_TARGET}/include"
+    "--disable-multilib"
+    "libc_cv_forced_unwind=yes"
+  )
+
+  # Fetch the source tarball if it doesn't already exist
+  if [ ! -f ${src_file} ]; then
+    cd ${XC_BUILD_DIR}
+    wget ${src_url}
+  fi
+
+  # Remove the build path as we are starting from scratch
+  if [ -d ${build_path} ]; then
+    rm -rf ${build_path}
+  fi
+
+  # Remove the source path if it exists
+  if [ -d ${src_absolute_path} ]; then
+    rm -rf ${src_absolute_path}
+  fi
+
+  cd ${XC_BUILD_DIR}
+  tar xf ${src_file}
+
+  mkdir ${build_path}
+  cd ${build_path}
+  ../${src_relative_path}/configure ${configure_options[*]}
+  
+}
+
 build_gcc_pass_one()
 {
   local pkg_name="gcc"
@@ -227,6 +273,7 @@ main()
   build_binutils
   build_linux_headers
   build_gcc_pass_one
+  build_glibc_pass_one
 }
 
 main
