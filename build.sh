@@ -17,7 +17,7 @@ build_linux_headers()
   local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
 
   local make_options=(
-    "ARCH=${XC_LINUX_TARGET}"
+    "ARCH=${XC_KERNEL_TARGET}"
     "INSTALL_HDR_PATH=${XC_PREFIX}/${XC_TARGET}"
     "headers_install"
   )
