@@ -6,6 +6,40 @@ set -e
 
 source ./config.sh
 
+build_linux_headers()
+{
+  local pkg_name="linux"
+  local compression="xz"
+  local filename="${pkg_name}-${XC_LINUX_VERSION}.tar.${compression}"
+  local src_url="${LINUX_BASE_URL}/v${XC_LINUX_VERSION_MAJOR}.x/${filename}"
+  local src_file="${XC_BUILD_DIR}/${filename}"
+  local src_relative_path="${pkg_name}-${XC_LINUX_VERSION}"
+  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+
+  local make_options=(
+    "ARCH=${XC_LINUX_TARGET}"
+    "INSTALL_HDR_PATH=${XC_PREFIX}/${XC_TARGET}"
+    "headers_install"
+  )
+
+  # Fetch the source tarball if it doesn't already exist
+  if [ ! -f ${src_file} ]; then
+    cd ${XC_BUILD_DIR}
+    wget ${src_url}
+  fi
+
+  # Remove the source path if it exists
+  if [ -d ${src_absolute_path} ]; then
+    rm -rf ${src_absolute_path}
+  fi
+
+  cd ${XC_BUILD_DIR}
+  tar xf ${src_file}
+
+  cd ${src_absolute_path}
+  make ${make_options[*]}
+}
+
 build_binutils()
 {
   local pkg_name="binutils"
@@ -191,6 +225,7 @@ main()
   fi
 
   build_binutils
+  build_linux_headers
   build_gcc_pass_one
 }
 
