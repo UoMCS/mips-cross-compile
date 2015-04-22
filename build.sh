@@ -126,7 +126,8 @@ build_glibc_pass_one()
   mkdir ${build_path}
   cd ${build_path}
   ../${src_relative_path}/configure ${configure_options[*]}
-  
+  make install-bootstrap-headers=yes install-headers
+  make csu/subdir_lib
 }
 
 build_gcc_pass_one()
