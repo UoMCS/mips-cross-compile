@@ -6,7 +6,7 @@ set -e
 
 export XC_PREFIX="/opt/cross"
 export XC_BIN="${XC_PREFIX}/bin"
-export XC_TARGET="mips-unknown-elf"
+export XC_TARGET="mips-linux"
 export XC_KERNEL_TARGET="mips"
 
 export XC_BUILD_DIR="/tmp"
