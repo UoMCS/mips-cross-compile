@@ -123,11 +123,14 @@ build_glibc_pass_one()
   cd ${XC_BUILD_DIR}
   tar xf ${src_file}
 
+  get_glibc_ports
+  cd ${src_absolute_path}
+  ln -s ../glibc-ports-${XC_GLIBC_PORTS_VERSION} ports
+
   mkdir ${build_path}
   cd ${build_path}
   ../${src_relative_path}/configure ${configure_options[*]}
   make install-bootstrap-headers=yes install-headers
-  make csu/subdir_lib
 }
 
 build_gcc_pass_one()
@@ -183,6 +186,31 @@ build_gcc_pass_one()
   cd ${build_path}
   ../${src_relative_path}/configure ${configure_options[*]}
   make all-gcc
+}
+
+get_glibc_ports()
+{
+  local pkg_name="glibc-ports"
+  local compression="xz"
+  local filename="${pkg_name}-${XC_GLIBC_PORTS_VERSION}.tar.${compression}"
+  local src_url="${GNU_BASE_URL}/glibc/${filename}"
+  local src_file="${XC_BUILD_DIR}/${filename}"
+  local src_relative_path="${pkg_name}-${XC_GLIBC_PORTS_VERSION}"
+  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+
+  # Fetch the source tarball if it doesn't already exist
+  if [ ! -f ${src_file} ]; then
+    cd ${XC_BUILD_DIR}
+    wget ${src_url}
+  fi
+
+  # Remove the source path if it exists
+  if [ -d ${src_absolute_path} ]; then
+    rm -rf ${src_absolute_path}
+  fi
+
+  cd ${XC_BUILD_DIR}
+  tar xf ${src_file}
 }
 
 get_mpfr()
