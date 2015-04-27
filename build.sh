@@ -1,308 +1,156 @@
 #!/bin/bash
 
-# Enable debugging options
 set -u
 set -e
 
 source ./config.sh
 
-build_linux_headers()
-{
-  local pkg_name="linux"
-  local compression="xz"
-  local filename="${pkg_name}-${XC_LINUX_VERSION}.tar.${compression}"
-  local src_url="${LINUX_BASE_URL}/v${XC_LINUX_VERSION_MAJOR}.x/${filename}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_LINUX_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+# Remove and then recreate prefix directory
+if [ -d ${XC_PREFIX} ]; then
+  rm -rf ${XC_PREFIX}
+fi
 
-  local make_options=(
-    "ARCH=${XC_KERNEL_TARGET}"
-    "INSTALL_HDR_PATH=${XC_PREFIX}/${XC_TARGET}"
-    "headers_install"
-  )
+mkdir ${XC_PREFIX}
 
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
+# Create temp directory if it does not already exist
+if [ ! -d ${XC_TMP_DIR} ]; then
+  mkdir -p ${XC_TMP_DIR}
+fi
 
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
+# 1. Download and build binutils
+# Only download the tarball if it does not exist
+if [ ! -f ${BINUTILS_TARBALL} ]; then
+  wget ${BINUTILS_URL} -O ${BINUTILS_TARBALL}
+fi
 
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
+# Remove the source directory if it exists
+if [ -d ${BINUTILS_SRC_DIR} ]; then
+  rm -rf ${BINUTILS_SRC_DIR}
+fi
 
-  cd ${src_absolute_path}
-  make ${make_options[*]}
-}
+cd ${XC_TMP_DIR}
+tar xf ${BINUTILS_TARBALL}
 
-build_binutils()
-{
-  local pkg_name="binutils"
-  local compression="bz2"
-  local filename="${pkg_name}-${XC_BINUTILS_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
-  local build_path="${XC_BUILD_DIR}/build-${pkg_name}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_BINUTILS_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+# Remove the build directory if it exists
+if [ -d ${BINUTILS_BUILD_DIR} ]; then
+  rm -rf ${BINUTILS_BUILD_DIR}
+fi
 
-  local configure_options=(
-    "--prefix=${XC_PREFIX}"
-    "--target=${XC_TARGET}"
-    "--disable-multilib"
-  )
+mkdir ${BINUTILS_BUILD_DIR}
+cd ${BINUTILS_BUILD_DIR}
+${BINUTILS_SRC_DIR}/configure ${BINUTILS_CONFIGURE_OPTIONS[*]}
+make
+make install
 
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
+# 2. Download and build GCC (first pass)
+# 2a) Download and extract GCC
+# Only download the tarball if it does not exist
+if [ ! -f ${GCC_TARBALL} ]; then
+  wget ${GCC_URL} -O ${GCC_TARBALL}
+fi
 
-  # Remove the build path as we are starting from scratch
-  if [ -d ${build_path} ]; then
-    rm -rf ${build_path}
-  fi
+# Remove the source directory if it exists
+if [ -d ${GCC_SRC_DIR} ]; then
+  rm -rf ${GCC_SRC_DIR}
+fi
 
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
+cd ${XC_TMP_DIR}
+tar xf ${GCC_TARBALL}
 
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
+# 2b) Download and extract MPFR
+# Only download tarball if it does not exist
+if [ ! -f ${MPFR_TARBALL} ]; then
+  wget ${MPFR_URL} -O ${MPFR_TARBALL}
+fi
 
-  mkdir ${build_path}
-  cd ${build_path}
-  ../${src_relative_path}/configure ${configure_options[*]}
-  make
-  make install
-}
+# Remove the source directory if it exists
+if [ -d ${MPFR_SRC_DIR} ]; then
+ rm -rf ${MPFR_SRC_DIR}
+fi
 
-build_glibc_pass_one()
-{
-  local pkg_name="glibc"
-  local compression="xz"
-  local filename="${pkg_name}-${XC_GLIBC_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
-  local build_path="${XC_BUILD_DIR}/build-${pkg_name}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_GLIBC_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+cd ${XC_TMP_DIR}
+tar xf ${MPFR_TARBALL}
 
-  local configure_options=(
-    "--prefix=${XC_PREFIX}/${XC_TARGET}"
-    "--build=$MACHTYPE"
-    "--host=${XC_TARGET}"
-    "--target=${XC_TARGET}"
-    "--with-headers=${XC_PREFIX}/${XC_TARGET}/include"
-    "--disable-multilib"
-    "libc_cv_forced_unwind=yes"
-  )
+# Symlink so that GCC build can find the library
+cd ${GCC_SRC_DIR}
+ln -s ../mpfr-${MPFR_VERSION} mpfr
 
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
+# 2c) Download and extract MPC
+# Only download tarball if it does not exist
+if [ ! -f ${MPC_TARBALL} ]; then
+  wget ${MPC_URL} -O ${MPC_TARBALL}
+fi
 
-  # Remove the build path as we are starting from scratch
-  if [ -d ${build_path} ]; then
-    rm -rf ${build_path}
-  fi
+# Remove the source directory if it exists
+if [ -d ${MPC_SRC_DIR} ]; then
+  rm -rf ${MPC_SRC_DIR}
+fi
 
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
+cd ${XC_TMP_DIR}
+tar xf ${MPC_TARBALL}
 
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
+# Symlink so that GCC build can find the library
+cd ${GCC_SRC_DIR}
+ln -s ../mpc-${MPC_VERSION} mpc
 
-  get_glibc_ports
-  cd ${src_absolute_path}
-  ln -s ../glibc-ports-${XC_GLIBC_PORTS_VERSION} ports
+# 2d) Download and extract GMP
+# Only download tarball if it does not exist
+if [ ! -f ${GMP_TARBALL} ]; then
+  wget ${GMP_URL} -O ${GMP_TARBALL}
+fi
 
-  mkdir ${build_path}
-  cd ${build_path}
-  ../${src_relative_path}/configure ${configure_options[*]}
-  make install-bootstrap-headers=yes install-headers
-}
+# Remove the source directory if it exists
+if [ -d ${GMP_SRC_DIR} ]; then
+  rm -rf ${GMP_SRC_DIR}
+fi
 
-build_gcc_pass_one()
-{
-  local pkg_name="gcc"
-  local compression="gz"
-  local filename="${pkg_name}-${XC_GCC_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${pkg_name}-${XC_GCC_VERSION}/${filename}"
-  local build_path="${XC_BUILD_DIR}/build-${pkg_name}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_GCC_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
+cd ${XC_TMP_DIR}
+tar xf ${GMP_TARBALL}
 
-  local configure_options=(
-    "--prefix=${XC_PREFIX}"
-    "--target=${XC_TARGET}"
-    "--enable-languages=${XC_GCC_LANGS}"
-    "--disable-multilib"
-  )
+# Symlink so that GCC build can find the library
+cd ${GCC_SRC_DIR}
+ln -s ../gmp-${GMP_VERSION} gmp
 
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
+# 2e) Configure and build GCC (1st pass)
+# Remove the build directory if it exists
+if [ -d ${GCC_BUILD_DIR} ]; then
+  rm -rf ${GCC_BUILD_DIR}
+fi
 
-  # Remove the build path as we are starting from scratch
-  if [ -d ${build_path} ]; then
-    rm -rf ${build_path}
-  fi
+mkdir ${GCC_BUILD_DIR}
+cd ${GCC_BUILD_DIR}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS_PASS_ONE[*]}
+make all-gcc
+make install-gcc
 
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
+# 3. Download and build newlib
+# Only down the tarball if it does not exist
+if [ ! -f ${NEWLIB_TARBALL} ]; then
+  wget ${NEWLIB_URL} -O ${NEWLIB_TARBALL}
+fi
 
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
+# Remove the source directory if it exists
+if [ -d ${NEWLIB_SRC_DIR} ]; then
+  rm -rf ${NEWLIB_SRC_DIR}
+fi
 
-  get_mpfr
-  cd ${src_absolute_path}
-  ln -s ../mpfr-${XC_MPFR_VERSION} mpfr
+cd ${XC_TMP_DIR}
+tar xf ${NEWLIB_TARBALL}
 
-  get_gmp
-  cd ${src_absolute_path}
-  ln -s ../gmp-${XC_GMP_VERSION} gmp
+# Remove the build directory if it exists
+if [ -d ${NEWLIB_BUILD_DIR} ]; then
+  rm -rf ${NEWLIB_BUILD_DIR}
+fi
 
-  get_mpc
-  cd ${src_absolute_path}
-  ln -s ../mpc-${XC_MPC_VERSION} mpc
+mkdir ${NEWLIB_BUILD_DIR}
+cd ${NEWLIB_BUILD_DIR}
+${NEWLIB_SRC_DIR}/configure ${NEWLIB_CONFIGURE_OPTIONS[*]}
+make
+make install
 
-  mkdir ${build_path}
-  cd ${build_path}
-  ../${src_relative_path}/configure ${configure_options[*]}
-  make all-gcc
-}
 
-get_glibc_ports()
-{
-  local pkg_name="glibc-ports"
-  local compression="xz"
-  local filename="${pkg_name}-${XC_GLIBC_PORTS_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/glibc/${filename}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_GLIBC_PORTS_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
-
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
-
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
-
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
-}
-
-get_mpfr()
-{
-  local pkg_name="mpfr"
-  local compression="xz"
-  local filename="${pkg_name}-${XC_MPFR_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_MPFR_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
-
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
-
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
-
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
-}
-
-get_gmp()
-{
-  local pkg_name="gmp"
-  local compression="xz"
-  local filename="${pkg_name}-${XC_GMP_VERSION}${XC_GMP_VERSION_MINOR}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_GMP_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
-
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
-
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
-
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
-}
-
-get_mpc()
-{
-  local pkg_name="mpc"
-  local compression="gz"
-  local filename="${pkg_name}-${XC_MPC_VERSION}.tar.${compression}"
-  local src_url="${GNU_BASE_URL}/${pkg_name}/${filename}"
-  local src_file="${XC_BUILD_DIR}/${filename}"
-  local src_relative_path="${pkg_name}-${XC_MPC_VERSION}"
-  local src_absolute_path="${XC_BUILD_DIR}/${src_relative_path}"
-
-  # Fetch the source tarball if it doesn't already exist
-  if [ ! -f ${src_file} ]; then
-    cd ${XC_BUILD_DIR}
-    wget ${src_url}
-  fi
-
-  # Remove the source path if it exists
-  if [ -d ${src_absolute_path} ]; then
-    rm -rf ${src_absolute_path}
-  fi
-
-  cd ${XC_BUILD_DIR}
-  tar xf ${src_file}
-}
-
-main()
-{
-  local current_user=`whoami`
-
-  if [ -d ${XC_PREFIX} ]; then
-    rm -rf ${XC_PREFIX}/*
-  else
-    sudo mkdir -p ${XC_PREFIX}
-    sudo chown ${current_user} ${XC_PREFIX}
-  fi
-
-  build_binutils
-  build_linux_headers
-  build_gcc_pass_one
-  build_glibc_pass_one
-}
-
-main
+# 4. Rebuild GCC with newlib
+cd ${GCC_BUILD_DIR}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS_PASS_TWO[*]}
+make all
+make install
