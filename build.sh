@@ -13,7 +13,6 @@ if [ ! -z ${FULL_REBUILD} ]; then
   echo "and take substantially longer than a partial rebuild"
   read -p "Are you sure this is what you want? (y/n) " confirm
   case $confirm in
-    [Yy] ) break;;
     [Nn] ) exit;;
   esac
 fi
