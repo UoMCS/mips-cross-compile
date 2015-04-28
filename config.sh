@@ -28,24 +28,20 @@ export GCC_URL="${GNU_BASE_URL}/gcc/gcc-${GCC_VERSION}/${GCC_FILENAME}"
 export GCC_TARBALL="${XC_TMP_DIR}/${GCC_FILENAME}"
 export GCC_SRC_DIR="${XC_TMP_DIR}/gcc-${GCC_VERSION}"
 export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
-export GCC_CONFIGURE_OPTIONS_PASS_ONE=(
+
+export GCC_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
   "--disable-multilib"
   "--disable-nls"
   "--enable-languages=${GCC_LANGS}"
-  "--without-headers"
   "--with-newlib"
 )
 
-export GCC_CONFIGURE_OPTIONS_PASS_TWO=(
-  "--prefix=${XC_PREFIX}"
-  "--target=${XC_TARGET}"
-  "--disable-multilib"
-  "--disable-nls"
-  "--enable-languages=${GCC_LANGS}"
-  "--with-newlib"
-)
+export GCC_CONFIGURE_OPTIONS_PASS_ONE=(${GCC_CONFIGURE_OPTIONS[*]})
+GCC_CONFIGURE_OPTIONS_PASS_ONE+=("--without-headers")
+
+export GCC_CONFIGURE_OPTIONS_PASS_TWO=(${GCC_CONFIGURE_OPTIONS[*]})
 
 export MPFR_VERSION="3.1.2"
 export MPFR_FILENAME="mpfr-${MPFR_VERSION}.tar.xz"
