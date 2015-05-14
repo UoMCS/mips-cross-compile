@@ -16,7 +16,7 @@ export XC_PREFIX="${HOME}/xc"
 
 # Don't edit these configuration variables.
 export XC_TMP_DIR="${XC_PREFIX}/${XC_TARGET}/tmp"
-export PATH="${PATH}:${XC_PREFIX}/bin"
+export PATH="${XC_PREFIX}/bin:${PATH}"
 
 # GNU (binutils, GCC + dependencies) and Sourceware (newlib) URLs. You can
 # change these to a local mirror if required.
