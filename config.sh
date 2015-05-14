@@ -88,8 +88,6 @@ export GCC_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
   "--enable-languages=${GCC_LANGS}"
-  "--disable-multilib"
-  "--disable-werror"
   "--with-newlib"
 )
 
