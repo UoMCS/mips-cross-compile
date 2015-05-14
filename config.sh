@@ -23,6 +23,7 @@ export PATH="${XC_PREFIX}/bin:${PATH}"
 export GNU_BASE_URL="http://ftpmirror.gnu.org"
 export SOURCEWARE_BASE_URL="ftp://sourceware.org/pub"
 export KERNEL_BASE_URL="https://www.kernel.org/pub/linux/kernel"
+export GCC_BASE_URL="ftp://gcc.gnu.org/pub/gcc"
 
 # Version numbers for the relevant components of the toolchain. Not all
 # version combinations have been tested. Unless you need a feature in
@@ -41,6 +42,10 @@ export MPC_VERSION="1.0.3"
 
 export GMP_VERSION="6.0.0"
 export GMP_VERSION_MINOR="a"
+
+export ISL_VERSION="0.14"
+
+export CLOOG_VERSION="0.18.1"
 
 export NEWLIB_VERSION="2.2.0-1"
 
@@ -107,6 +112,16 @@ export GMP_FILENAME="gmp-${GMP_VERSION}${GMP_VERSION_MINOR}.tar.xz"
 export GMP_URL="${GNU_BASE_URL}/gmp/${GMP_FILENAME}"
 export GMP_TARBALL="${XC_TMP_DIR}/${GMP_FILENAME}"
 export GMP_SRC_DIR="${XC_TMP_DIR}/gmp-${GMP_VERSION}"
+
+export ISL_FILENAME="isl-${ISL_VERSION}.tar.bz2"
+export ISL_URL="${GCC_BASE_URL}/infrastructure/${ISL_FILENAME}"
+export ISL_TARBALL="${XC_TMP_DIR}/${ISL_FILENAME}"
+export ISL_SRC_DIR="${XC_TMP_DIR}/isl-${ISL_VERSION}"
+
+export CLOOG_FILENAME="cloog-${CLOOG_VERSION}.tar.gz"
+export CLOOG_URL="${GCC_BASE_URL}/infrastructure/${CLOOG_FILENAME}"
+export CLOOG_TARBALL="${XC_TMP_DIR}/${CLOOG_FILENAME}"
+export CLOOG_SRC_DIR="${XC_TMP_DIR}/cloog-${CLOOG_VERSION}"
 
 export NEWLIB_FILENAME="newlib-${NEWLIB_VERSION}.tar.gz"
 export NEWLIB_URL="${SOURCEWARE_BASE_URL}/newlib/${NEWLIB_FILENAME}"

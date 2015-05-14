@@ -131,9 +131,45 @@ if [ ! -z ${FULL_REBUILD} ]; then
   # Symlink so that GCC build can find the library
   cd ${GCC_SRC_DIR}
   ln -s ../gmp-${GMP_VERSION} gmp
+
+  # 2e) Download and extract ISL
+  # Only download tarball if it does not exist
+  if [ ! -f ${ISL_TARBALL} ]; then
+    wget ${ISL_URL} -O ${ISL_TARBALL}
+  fi
+
+  # Remove the source directory if it exists
+  if [ -d ${ISL_SRC_DIR} ]; then
+    rm -rf ${ISL_SRC_DIR}
+  fi
+
+  cd ${XC_TMP_DIR}
+  tar xf ${ISL_TARBALL}
+
+  # Symlink so that GCC build can find the library
+  cd ${GCC_SRC_DIR}
+  ln -s ../isl-${ISL_VERSION} isl
+
+  # 2f) Download and extract cloog
+  # Only download tarball if it does not exist
+  if [ ! -f ${CLOOG_TARBALL} ]; then
+    wget ${CLOOG_URL} -O ${CLOOG_TARBALL}
+  fi
+
+  # Remove the source directory if it exists
+  if [ -d ${CLOOG_SRC_DIR} ]; then
+    rm -rf ${CLOOG_SRC_DIR}
+  fi
+
+  cd ${XC_TMP_DIR}
+  tar xf ${CLOOG_TARBALL}
+
+  # Symlink so that GCC build can find the library
+  cd ${GCC_SRC_DIR}
+  ln -s ../cloog-${CLOOG_VERSION} cloog
 fi
 
-# 2e) Configure and build GCC (1st pass)
+# 2g) Configure and build GCC (1st pass)
 if [ ! -z ${FULL_REBUILD} ]; then
   # Remove the build directory if it exists
   if [ -d ${GCC_BUILD_DIR} ]; then
