@@ -144,7 +144,7 @@ if [ ! -z ${FULL_REBUILD} ]; then
 fi
 
 cd ${GCC_BUILD_DIR}
-${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS_PASS_ONE[*]}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
 make all-gcc
 make install-gcc
 
@@ -178,6 +178,5 @@ make install
 
 # 4. Rebuild GCC with newlib
 cd ${GCC_BUILD_DIR}
-${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS_PASS_TWO[*]}
 make all
 make install

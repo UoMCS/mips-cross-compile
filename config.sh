@@ -4,6 +4,7 @@
 # may need all parts of the triplet (e.g. for a Raspberry Pi you should set
 # XC_TARGET to "arm-unknown-linux-gnueabihf").
 export XC_TARGET="mips"
+export XC_KERNEL_TARGET="mips"
 
 # Prefix to use for downloading and building the toolchain, as well as the
 # destination directory for the final binaries.
@@ -21,6 +22,7 @@ export PATH="${PATH}:${XC_PREFIX}/bin"
 # change these to a local mirror if required.
 export GNU_BASE_URL="http://ftpmirror.gnu.org"
 export SOURCEWARE_BASE_URL="ftp://sourceware.org/pub"
+export KERNEL_BASE_URL="https://www.kernel.org/pub/linux/kernel"
 
 # Version numbers for the relevant components of the toolchain. Not all
 # version combinations have been tested. Unless you need a feature in
@@ -32,7 +34,7 @@ export BINUTILS_VERSION="2.25"
 # GCC_VERSION to the latest version of the 4.9.x series, but you should not
 # set it to 5.x.
 export GCC_VERSION="4.9.2"
-export GCC_LANGS="c"
+export GCC_LANGS="c,c++"
 
 export MPFR_VERSION="3.1.2"
 export MPC_VERSION="1.0.3"
@@ -42,9 +44,19 @@ export GMP_VERSION_MINOR="a"
 
 export NEWLIB_VERSION="2.2.0-1"
 
+export KERNEL_VERSION_MAJOR="4"
+export KERNEL_VERSION_MINOR="0.3"
+export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
+
+export GLOBAL_CONFIGURE_OPTIONS=(
+  "--disable-multilib"
+  "--disable-werror"
+  "--disable-threads"
+)
+
 # You should not need to edit any of the following variables unless the build
 # process fails.
-export BINUTILS_FILENAME="binutils-${BINUTILS_VERSION}.tar.gz"
+export BINUTILS_FILENAME="binutils-${BINUTILS_VERSION}.tar.bz2"
 export BINUTILS_URL="${GNU_BASE_URL}/binutils/${BINUTILS_FILENAME}"
 export BINUTILS_TARBALL="${XC_TMP_DIR}/${BINUTILS_FILENAME}"
 export BINUTILS_SRC_DIR="${XC_TMP_DIR}/binutils-${BINUTILS_VERSION}"
@@ -52,10 +64,18 @@ export BINUTILS_BUILD_DIR="${XC_TMP_DIR}/build-binutils"
 export BINUTILS_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
-  "--disable-multilib"
-  "--disable-nls"
-  "--without-isl"
-  "--without-cloogs"
+)
+
+BINUTILS_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
+
+export KERNEL_FILENAME="linux-${KERNEL_VERSION}.tar.xz"
+export KERNEL_URL="${KERNEL_BASE_URL}/v${KERNEL_VERSION_MAJOR}.x/${KERNEL_FILENAME}"
+export KERNEL_TARBALL="${XC_TMP_DIR}/${KERNEL_FILENAME}"
+export KERNEL_SRC_DIR="${XC_TMP_DIR}/linux-${KERNEL_VERSION}"
+export KERNEL_MAKE_OPTIONS=(
+  "ARCH=${XC_KERNEL_TARGET}"
+  "INSTALL_HDR_PATH=${XC_PREFIX}"
+  "headers_install"
 )
 
 export GCC_FILENAME="gcc-${GCC_VERSION}.tar.gz"
@@ -67,18 +87,13 @@ export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
 export GCC_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
-  "--disable-multilib"
-  "--disable-nls"
   "--enable-languages=${GCC_LANGS}"
+  "--disable-multilib"
+  "--disable-werror"
   "--with-newlib"
-  "--without-isl"
-  "--without-cloogs"
 )
 
-export GCC_CONFIGURE_OPTIONS_PASS_ONE=(${GCC_CONFIGURE_OPTIONS[*]})
-GCC_CONFIGURE_OPTIONS_PASS_ONE+=("--without-headers")
-
-export GCC_CONFIGURE_OPTIONS_PASS_TWO=(${GCC_CONFIGURE_OPTIONS[*]})
+GCC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
 
 export MPFR_FILENAME="mpfr-${MPFR_VERSION}.tar.xz"
 export MPFR_URL="${GNU_BASE_URL}/mpfr/${MPFR_FILENAME}"
@@ -103,6 +118,6 @@ export NEWLIB_BUILD_DIR="${XC_TMP_DIR}/build-newlib"
 export NEWLIB_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
-  "--disable-multilib"
-  "--disable-nls"
 )
+
+NEWLIB_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
