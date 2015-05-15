@@ -129,7 +129,7 @@ if [ ! -z ${FULL_REBUILD} ]; then
   ln -s ${GMP_SRC_DIR} ${GCC_SRC_DIR}/gmp
 
   # ISL
-  if [ -id ${ISL_SRC_DIR} ]; then
+  if [ -d ${ISL_SRC_DIR} ]; then
     rm -rf ${ISL_SRC_DIR}
   fi
 
