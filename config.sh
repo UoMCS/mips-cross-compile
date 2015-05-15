@@ -125,7 +125,7 @@ export GMP_URL="${GNU_BASE_URL}/gmp/${GMP_FILENAME}"
 export GMP_TARBALL="${XC_TMP_DIR}/${GMP_FILENAME}"
 export GMP_SRC_DIR="${XC_TMP_DIR}/gmp-${GMP_VERSION}"
 
-export ISL_FILENAME="isl-${ISL_VERSION}.tar.bz"
+export ISL_FILENAME="isl-${ISL_VERSION}.tar.bz2"
 export ISL_URL="${GCC_BASE_URL}/infrastructure/${ISL_FILENAME}"
 export ISL_TARBALL="${XC_TMP_DIR}/${ISL_FILENAME}"
 export ISL_SRC_DIR="${XC_TMP_DIR}/isl-${ISL_VERSION}"
