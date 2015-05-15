@@ -168,7 +168,7 @@ make install-bootstrap-headers=yes install-headers
 make csu/subdir_lib
 install csu/crt1.o csu/crti.o csu/crtn.o ${XC_PREFIX}/${XC_TARGET}/lib
 ${XC_TARGET}-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${XC_PREFIX}/${XC_TARGET}/lib/libc.so
-touch ${XC_PREFIX}/${XC_TARGET}/include/gnu/stubs.h
+touch ${XC_PREFIX}/include/gnu/stubs.h
 
 
 # Build GCC (second pass)
