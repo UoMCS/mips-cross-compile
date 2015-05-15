@@ -4,7 +4,7 @@
 # may need all parts of the triplet (e.g. for a Raspberry Pi you should set
 # XC_TARGET to "arm-unknown-linux-gnueabihf").
 export XC_TARGET="aarch64-linux"
-export XC_KERNEL_TARGET="amd64"
+export XC_KERNEL_TARGET="arm64"
 
 # Prefix to use for downloading and building the toolchain, as well as the
 # destination directory for the final binaries.
