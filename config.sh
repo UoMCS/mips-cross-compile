@@ -16,6 +16,7 @@ export XC_PREFIX="${HOME}/xc"
 
 # Don't edit these configuration variables.
 export XC_TMP_DIR="${XC_PREFIX}/${XC_TARGET}/tmp"
+export XC_HEADER_DIR="${XC_PREFIX}/${XC_TARGET}"
 export PATH="${XC_PREFIX}/bin:${PATH}"
 
 # GNU (binutils, GCC + dependencies) and Sourceware (newlib) URLs. You can
@@ -81,7 +82,7 @@ export KERNEL_TARBALL="${XC_TMP_DIR}/${KERNEL_FILENAME}"
 export KERNEL_SRC_DIR="${XC_TMP_DIR}/linux-${KERNEL_VERSION}"
 export KERNEL_MAKE_OPTIONS=(
   "ARCH=${XC_KERNEL_TARGET}"
-  "INSTALL_HDR_PATH=${XC_PREFIX}"
+  "INSTALL_HDR_PATH=${XC_HEADER_DIR}"
   "headers_install"
 )
 
@@ -93,7 +94,7 @@ export GLIBC_BUILD_DIR="${XC_TMP_DIR}/build-glibc"
 export GLIBC_CONFIGURE_OPTIONS=(
   "--build=${MACHTYPE}"
   "--host=${XC_TARGET}"
-  "--with-headers=${XC_PREFIX}/include"
+  "--with-headers=${XC_HEADER_DIR}/include"
   "libc_cv_forced_unwind=yes"
 )
 

@@ -192,9 +192,9 @@ cd ${GLIBC_BUILD_DIR}
 ${GLIBC_SRC_DIR}/configure ${GLIBC_CONFIGURE_OPTIONS[*]}
 make install-bootstrap-headers=yes install-headers
 make csu/subdir_lib
-install csu/crt1.o csu/crti.o csu/crtn.o ${XC_PREFIX}/${XC_TARGET}/lib
-${XC_TARGET}-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${XC_PREFIX}/${XC_TARGET}/lib/libc.so
-touch ${XC_PREFIX}/include/gnu/stubs.h
+install csu/crt1.o csu/crti.o csu/crtn.o ${XC_HEADER_DIR}/lib
+${XC_TARGET}-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${XC_HEADER_DIR}/lib/libc.so
+touch ${XC_HEADER_DIR}/include/gnu/stubs.h
 
 
 # Build GCC (second pass)
