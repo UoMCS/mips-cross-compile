@@ -122,3 +122,7 @@ export GMP_FILENAME="gmp-${GMP_VERSION}${GMP_VERSION_MINOR}.tar.xz"
 export GMP_URL="${GNU_BASE_URL}/gmp/${GMP_FILENAME}"
 export GMP_TARBALL="${XC_TMP_DIR}/${GMP_FILENAME}"
 export GMP_SRC_DIR="${XC_TMP_DIR}/gmp-${GMP_VERSION}"
+
+if [ -f ./user-post-config.sh ]; then
+  source ./user-post-config.sh
+fi
