@@ -59,6 +59,10 @@ export GLOBAL_CONFIGURE_OPTIONS=(
   #"--disable-threads"
 )
 
+if [ -f ./user-pre-config.sh ]; then
+  source ./user-pre-config.sh
+fi
+
 # You should not need to edit any of the following variables unless the build
 # process fails.
 export BINUTILS_FILENAME="binutils-${BINUTILS_VERSION}.tar.bz2"
