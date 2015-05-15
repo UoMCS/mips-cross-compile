@@ -51,6 +51,8 @@ export MPC_VERSION="1.0.3"
 export GMP_VERSION="6.0.0"
 export GMP_VERSION_MINOR="a"
 
+export ISL_VERSION="0.12.2"
+
 export GLOBAL_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
@@ -122,3 +124,8 @@ export GMP_FILENAME="gmp-${GMP_VERSION}${GMP_VERSION_MINOR}.tar.xz"
 export GMP_URL="${GNU_BASE_URL}/gmp/${GMP_FILENAME}"
 export GMP_TARBALL="${XC_TMP_DIR}/${GMP_FILENAME}"
 export GMP_SRC_DIR="${XC_TMP_DIR}/gmp-${GMP_VERSION}"
+
+export ISL_FILENAME="isl-${ISL_VERSION}.tar.bz"
+export ISL_URL="${GCC_BASE_URL}/infrastructure/${ISL_FILENAME}"
+export ISL_TARBALL="${XC_TMP_DIR}/${ISL_FILENAME}"
+export ISL_SRC_DIR="${XC_TMP_DIR}/isl-${ISL_VERSION}"

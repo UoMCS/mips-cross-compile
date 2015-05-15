@@ -67,6 +67,11 @@ if [ ! -x ${FULL_REBUILD} ]; then
   if [ ! -f ${GMP_TARBALL} ]; then
     wget ${GMP_URL} -O ${GMP_TARBALL}
   fi
+
+  # ISL
+  if [ ! -f ${ISL_TARBALL} ]; then
+    wget ${ISL_URL} -O ${ISL_TARBALL}
+  fi
 fi
 
 # Extract all tarballs
@@ -121,7 +126,15 @@ if [ ! -z ${FULL_REBUILD} ]; then
   fi
 
   tar -xf ${GMP_TARBALL} -C ${XC_TMP_DIR}
-  ln -s ${GMP_TARBALL} ${GCC_SRC_DIR}/gmp
+  ln -s ${GMP_SRC_DIR} ${GCC_SRC_DIR}/gmp
+
+  # ISL
+  if [ -id ${ISL_SRC_DIR} ]; then
+    rm -rf ${ISL_SRC_DIR}
+  fi
+
+  tar -xf ${ISL_TARBALL} -C ${XC_TMP_DIR}
+  ls -s ${ISL_SRC_DIR} ${GCC_SRC_DIR}/isl
 fi
 
 # Build binutils
