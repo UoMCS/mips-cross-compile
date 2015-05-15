@@ -56,7 +56,7 @@ export GLOBAL_CONFIGURE_OPTIONS=(
   "--target=${XC_TARGET}"
   "--disable-multilib"
   "--disable-werror"
-  #"--disable-threads"
+  "--disable-threads"
 )
 
 # You should not need to edit any of the following variables unless the build
