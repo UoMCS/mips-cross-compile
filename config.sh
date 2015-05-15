@@ -56,7 +56,6 @@ export ISL_VERSION="0.12.2"
 export CLOOG_VERSION="0.18.1"
 
 export GLOBAL_CONFIGURE_OPTIONS=(
-  "--prefix=${XC_PREFIX}"
   "--target=${XC_TARGET}"
   "--disable-multilib"
   "--disable-werror"
@@ -71,7 +70,7 @@ export BINUTILS_TARBALL="${XC_TMP_DIR}/${BINUTILS_FILENAME}"
 export BINUTILS_SRC_DIR="${XC_TMP_DIR}/binutils-${BINUTILS_VERSION}"
 export BINUTILS_BUILD_DIR="${XC_TMP_DIR}/build-binutils"
 export BINUTILS_CONFIGURE_OPTIONS=(
-
+  "--prefix=${XC_PREFIX}"
 )
 
 BINUTILS_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
@@ -92,6 +91,7 @@ export GLIBC_TARBALL="${XC_TMP_DIR}/${GLIBC_FILENAME}"
 export GLIBC_SRC_DIR="${XC_TMP_DIR}/glibc-${GLIBC_VERSION}"
 export GLIBC_BUILD_DIR="${XC_TMP_DIR}/build-glibc"
 export GLIBC_CONFIGURE_OPTIONS=(
+  "--prefix=${XC_HEADER_DIR}"
   "--build=${MACHTYPE}"
   "--host=${XC_TARGET}"
   "--with-headers=${XC_HEADER_DIR}/include"
@@ -107,6 +107,7 @@ export GCC_SRC_DIR="${XC_TMP_DIR}/gcc-${GCC_VERSION}"
 export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
 
 export GCC_CONFIGURE_OPTIONS=(
+  "--prefix=${XC_PREFIX}"
   "--enable-languages=${GCC_LANGS}"
 )
 
