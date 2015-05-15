@@ -3,8 +3,8 @@
 # Target architecture for the toolchain. Depending on the architecture, you
 # may need all parts of the triplet (e.g. for a Raspberry Pi you should set
 # XC_TARGET to "arm-unknown-linux-gnueabihf").
-export XC_TARGET="mips-elf"
-export XC_KERNEL_TARGET="mips"
+export XC_TARGET="aarch64-linux"
+export XC_KERNEL_TARGET="amd64"
 
 # Prefix to use for downloading and building the toolchain, as well as the
 # destination directory for the final binaries.
@@ -58,10 +58,6 @@ export GLOBAL_CONFIGURE_OPTIONS=(
   "--disable-werror"
   #"--disable-threads"
 )
-
-if [ -f ./user-pre-config.sh ]; then
-  source ./user-pre-config.sh
-fi
 
 # You should not need to edit any of the following variables unless the build
 # process fails.
@@ -126,7 +122,3 @@ export GMP_FILENAME="gmp-${GMP_VERSION}${GMP_VERSION_MINOR}.tar.xz"
 export GMP_URL="${GNU_BASE_URL}/gmp/${GMP_FILENAME}"
 export GMP_TARBALL="${XC_TMP_DIR}/${GMP_FILENAME}"
 export GMP_SRC_DIR="${XC_TMP_DIR}/gmp-${GMP_VERSION}"
-
-if [ -f ./user-post-config.sh ]; then
-  source ./user-post-config.sh
-fi
