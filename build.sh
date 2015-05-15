@@ -153,3 +153,35 @@ cd ${GCC_BUILD_DIR}
 ${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
 make all-gcc
 make install-gcc
+
+# Build glibc (first pass)
+# Remove and recreate the build directory
+if [ -d ${GLIBC_BUILD_DIR} ]; then
+  rm -rf ${GLIBC_BUILD_DIR}
+fi
+
+mkdir ${GLIBC_BUILD_DIR}
+
+cd ${GLIBC_BUILD_DIR}
+${GLIBC_SRC_DIR}/configure ${GLIBC_CONFIGURE_OPTIONS[*]}
+make install-bootstrap-headers=yes install-headers
+make csu/subdir_lib
+install csu/crt1.o csu/crti.o csu/crtn.o ${XC_PREFIX}/${XC_TARGET}/lib
+${XC_TARGET}-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${XC_PREFIX}/${XC_TARGET}/lib/libc.so
+touch ${XC_PREFIX}/${XC_TARGET}/include/gnu/stubs.h
+
+
+# Build GCC (second pass)
+cd ${GCC_BUILD_DIR}
+make all-target-libgcc
+make install-target-libgcc
+
+# Build glibc (second pass)
+cd ${GLIBC_BUILD_DIR}
+make
+make install
+
+# Build and install GCC (third pass)
+cd ${GCC_BUILD_DIR}
+make all
+make install
