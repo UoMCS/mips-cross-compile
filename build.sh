@@ -72,6 +72,11 @@ if [ ! -x ${FULL_REBUILD} ]; then
   if [ ! -f ${ISL_TARBALL} ]; then
     wget ${ISL_URL} -O ${ISL_TARBALL}
   fi
+
+  # Cloog
+  if [ ! -f ${CLOOG_TARBALL} ]; then
+    wget ${CLOOG_URL} -O ${CLOOG_TARBALL}
+  fi
 fi
 
 # Extract all tarballs
