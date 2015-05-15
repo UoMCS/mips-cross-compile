@@ -134,7 +134,7 @@ if [ ! -z ${FULL_REBUILD} ]; then
   fi
 
   tar -xf ${ISL_TARBALL} -C ${XC_TMP_DIR}
-  ls -s ${ISL_SRC_DIR} ${GCC_SRC_DIR}/isl
+  ln -s ${ISL_SRC_DIR} ${GCC_SRC_DIR}/isl
 fi
 
 # Build binutils
