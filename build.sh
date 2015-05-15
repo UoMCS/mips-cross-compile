@@ -135,6 +135,14 @@ if [ ! -z ${FULL_REBUILD} ]; then
 
   tar -xf ${ISL_TARBALL} -C ${XC_TMP_DIR}
   ln -s ${ISL_SRC_DIR} ${GCC_SRC_DIR}/isl
+
+  # Cloog
+  if [ -d ${CLOOG_SRC_DIR} ]; then
+    rm -rf ${CLOOG_SRC_DIR}
+  fi
+
+  tar -xf ${CLOOG_TARBALL} -C ${XC_TMP_DIR}
+  ln -s ${CLOOG_SRC_DIR} ${GCC_SRC_DIR}/cloog
 fi
 
 # Build binutils

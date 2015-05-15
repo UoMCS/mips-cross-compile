@@ -52,6 +52,7 @@ export GMP_VERSION="6.0.0"
 export GMP_VERSION_MINOR="a"
 
 export ISL_VERSION="0.12.2"
+export CLOOG_VERSION="0.18.1"
 
 export GLOBAL_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
@@ -129,3 +130,8 @@ export ISL_FILENAME="isl-${ISL_VERSION}.tar.bz2"
 export ISL_URL="${GCC_BASE_URL}/infrastructure/${ISL_FILENAME}"
 export ISL_TARBALL="${XC_TMP_DIR}/${ISL_FILENAME}"
 export ISL_SRC_DIR="${XC_TMP_DIR}/isl-${ISL_VERSION}"
+
+export CLOOG_FILENAME="cloog-${CLOOG_VERSION}.tar.gz"
+export CLOOG_URL="${GCC_BASE_URL}/infrastructure/${CLOOG_FILENAME}"
+export CLOOG_TARBALL="${XC_TMP_DIR}/${CLOOG_FILENAME}"
+export CLOOG_SRC_DIR="${XC_TMP_DIR}/cloog-${CLOOG_VERSION}"
