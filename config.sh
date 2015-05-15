@@ -90,7 +90,7 @@ export GLIBC_BUILD_DIR="${XC_TMP_DIR}/build-glibc"
 export GLIBC_CONFIGURE_OPTIONS=(
   "--build=${MACHTYPE}"
   "--host=${XC_TARGET}"
-  "--with-headers=${XC_PREFIX}/${XC_TARGET}/include"
+  "--with-headers=${XC_PREFIX}/include"
   "libc_cv_forced_unwind=yes"
 )
 
