@@ -104,7 +104,6 @@ export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
 
 export GCC_CONFIGURE_OPTIONS=(
   "--enable-languages=${GCC_LANGS}"
-  "--with-newlib"
 )
 
 GCC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})

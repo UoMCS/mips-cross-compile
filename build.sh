@@ -140,3 +140,16 @@ make install
 # Build kernel headers (no need for separate build directory)
 cd ${KERNEL_SRC_DIR}
 make ${KERNEL_MAKE_OPTIONS}
+
+# Build GCC (first pass)
+# Remove and recreate the build directory
+if [ -d ${GCC_BUILD_DIR} ]; then
+  rm -rf ${GCC_BUILD_DIR}
+fi
+
+mkdir ${GCC_BUILD_DIR}
+
+cd ${GCC_BUILD_DIR}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
+make all-gcc
+make install-gcc
