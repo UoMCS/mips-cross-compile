@@ -1,3 +1,4 @@
 *.log
 user-pre-config.sh
 user-post-config.sh
+.vagrant
