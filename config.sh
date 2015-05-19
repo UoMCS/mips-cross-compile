@@ -31,7 +31,7 @@ export GCC_BASE_URL="ftp://gcc.gnu.org/pub/gcc"
 # a later version, do not edit these options.
 export BINUTILS_VERSION="2.25"
 
-export NEWLIB_VERSION="2.2.0-1"
+export NEWLIB_VERSION="2.2.0.20150423"
 
 # The GCC version number should be in the same minor series as your host
 # compiler. For example, if your host has GCC 4.9.1, you can probably set
@@ -55,6 +55,7 @@ export GLOBAL_CONFIGURE_OPTIONS=(
   "--disable-werror"
   "--disable-threads"
   "--disable-shared"
+  "--disable-nls"
 )
 
 # You should not need to edit any of the following variables unless the build
