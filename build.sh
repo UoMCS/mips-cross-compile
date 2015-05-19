@@ -38,14 +38,9 @@ if [ ! -x ${FULL_REBUILD} ]; then
     wget ${BINUTILS_URL} -O ${BINUTILS_TARBALL}
   fi
 
-  # Linux
-  if [ ! -f ${KERNEL_TARBALL} ]; then
-    wget ${KERNEL_URL} -O ${KERNEL_TARBALL}
-  fi
-
-  # Glibc
-  if [ ! -f ${GLIBC_TARBALL} ]; then
-    wget ${GLIBC_URL} -O ${GLIBC_TARBALL}
+  # Newlib
+  if [ ! -f ${NEWLIB_TARBALL} ]; then
+    wget ${NEWLIB_URL} -O ${NEWLIB_TARBALL}
   fi
 
   # GCC
@@ -88,19 +83,12 @@ if [ ! -z ${FULL_REBUILD} ]; then
 
   tar -xf ${BINUTILS_TARBALL} -C ${XC_TMP_DIR}
 
-  # Linux
-  if [ -d ${KERNEL_SRC_DIR} ]; then
-    rm -rf ${KERNEL_SRC_DIR}
+  # Newlib
+  if [ -d ${NEWLIB_SRC_DIR} ]; then
+    rm -rf ${NEWLIB_SRC_DIR}
   fi
 
-  tar -xf ${KERNEL_TARBALL} -C ${XC_TMP_DIR}
-
-  # glibc
-  if [ -d ${GLIBC_SRC_DIR} ]; then
-    rm -rf ${GLIBC_SRC_DIR}
-  fi
-
-  tar -xf ${GLIBC_TARBALL} -C ${XC_TMP_DIR}
+  tar -xf ${NEWLIB_TARBALL} -C ${XC_TMP_DIR}
 
   # GCC
   if [ -d ${GCC_SRC_DIR} ]; then
@@ -163,10 +151,6 @@ ${BINUTILS_SRC_DIR}/configure ${BINUTILS_CONFIGURE_OPTIONS[*]}
 make
 make install
 
-# Build kernel headers (no need for separate build directory)
-cd ${KERNEL_SRC_DIR}
-make ${KERNEL_MAKE_OPTIONS[*]}
-
 # Build GCC (first pass)
 # Remove and recreate the build directory
 if [ -d ${GCC_BUILD_DIR} ]; then
@@ -180,30 +164,16 @@ ${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
 make all-gcc
 make install-gcc
 
-# Build glibc (first pass)
+# Build newlib
 # Remove and recreate the build directory
-if [ -d ${GLIBC_BUILD_DIR} ]; then
-  rm -rf ${GLIBC_BUILD_DIR}
+if [ -d ${NEWLIB_BUILD_DIR} ]; then
+  rm -rf ${NEWLIB_BUILD_DIR}
 fi
 
-mkdir ${GLIBC_BUILD_DIR}
+mkdir ${NEWLIB_BUILD_DIR}
 
-cd ${GLIBC_BUILD_DIR}
-${GLIBC_SRC_DIR}/configure ${GLIBC_CONFIGURE_OPTIONS[*]}
-make install-bootstrap-headers=yes install-headers
-make csu/subdir_lib
-install csu/crt1.o csu/crti.o csu/crtn.o ${XC_HEADER_DIR}/lib
-${XC_TARGET}-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o ${XC_HEADER_DIR}/lib/libc.so
-touch ${XC_HEADER_DIR}/include/gnu/stubs.h
-
-
-# Build GCC (second pass)
-cd ${GCC_BUILD_DIR}
-make all-target-libgcc
-make install-target-libgcc
-
-# Build glibc (second pass)
-cd ${GLIBC_BUILD_DIR}
+cd ${NEWLIB_BUILD_DIR}
+${NEWLIB_SRC_DIR}/configure ${NEWLIB_CONFIGURE_OPTIONS[*]}
 make
 make install
 

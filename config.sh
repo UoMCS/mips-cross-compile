@@ -31,13 +31,7 @@ export GCC_BASE_URL="ftp://gcc.gnu.org/pub/gcc"
 # a later version, do not edit these options.
 export BINUTILS_VERSION="2.25"
 
-# Kernel headers are required for glibc
-# Generally it is best to choose the latest stable release
-export KERNEL_VERSION_MAJOR="4"
-export KERNEL_VERSION_MINOR="0.3"
-export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
-
-export GLIBC_VERSION="2.21"
+export NEWLIB_VERSION="2.2.0-1"
 
 # The GCC version number should be in the same minor series as your host
 # compiler. For example, if your host has GCC 4.9.1, you can probably set
@@ -60,6 +54,7 @@ export GLOBAL_CONFIGURE_OPTIONS=(
   "--disable-multilib"
   "--disable-werror"
   "--disable-threads"
+  "--disable-shared"
 )
 
 # You should not need to edit any of the following variables unless the build
@@ -75,28 +70,16 @@ export BINUTILS_CONFIGURE_OPTIONS=(
 
 BINUTILS_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
 
-export KERNEL_FILENAME="linux-${KERNEL_VERSION}.tar.xz"
-export KERNEL_URL="${KERNEL_BASE_URL}/v${KERNEL_VERSION_MAJOR}.x/${KERNEL_FILENAME}"
-export KERNEL_TARBALL="${XC_TMP_DIR}/${KERNEL_FILENAME}"
-export KERNEL_SRC_DIR="${XC_TMP_DIR}/linux-${KERNEL_VERSION}"
-export KERNEL_MAKE_OPTIONS=(
-  "ARCH=${XC_KERNEL_TARGET}"
-  "INSTALL_HDR_PATH=${XC_HEADER_DIR}"
-  "headers_install"
+export NEWLIB_FILENAME="newlib-${NEWLIB_VERSION}.tar.gz"
+export NEWLIB_URL="${SOURCEWARE_BASE_URL}/newlib/${NEWLIB_FILENAME}"
+export NEWLIB_TARBALL="${XC_TMP_DIR}/${NEWLIB_FILENAME}"
+export NEWLIB_SRC_DIR="${XC_TMP_DIR}/newlib-${NEWLIB_VERSION}"
+export NEWLIB_BUILD_DIR="${XC_TMP_DIR}/build-newlib"
+export NEWLIB_CONFIGURE_OPTIONS=(
+  "--prefix=${XC_HEADER_DIR}"
 )
 
-export GLIBC_FILENAME="glibc-${GLIBC_VERSION}.tar.xz"
-export GLIBC_URL="${GNU_BASE_URL}/glibc/${GLIBC_FILENAME}"
-export GLIBC_TARBALL="${XC_TMP_DIR}/${GLIBC_FILENAME}"
-export GLIBC_SRC_DIR="${XC_TMP_DIR}/glibc-${GLIBC_VERSION}"
-export GLIBC_BUILD_DIR="${XC_TMP_DIR}/build-glibc"
-export GLIBC_CONFIGURE_OPTIONS=(
-  "--prefix=${XC_HEADER_DIR}"
-  "--build=${MACHTYPE}"
-  "--host=${XC_TARGET}"
-  "--with-headers=${XC_HEADER_DIR}/include"
-  "libc_cv_forced_unwind=yes"
-)
+NEWLIB_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
 
 GLIBC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
 
@@ -109,6 +92,7 @@ export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
 export GCC_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
   "--enable-languages=${GCC_LANGS}"
+  "--with-newlib"
 )
 
 GCC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
