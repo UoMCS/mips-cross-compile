@@ -3,7 +3,7 @@
 # Target architecture for the toolchain. Depending on the architecture, you
 # may need all parts of the triplet (e.g. for a Raspberry Pi you should set
 # XC_TARGET to "arm-unknown-linux-gnueabihf").
-export XC_TARGET="mips"
+export XC_TARGET="mips-linux"
 export XC_KERNEL_TARGET="mips"
 
 # Prefix to use for downloading and building the toolchain, as well as the
@@ -16,6 +16,7 @@ export XC_PREFIX="${HOME}/xc"
 
 # Don't edit these configuration variables.
 export XC_TMP_DIR="${XC_PREFIX}/${XC_TARGET}/tmp"
+export XC_HEADER_DIR="${XC_PREFIX}/${XC_TARGET}"
 export PATH="${XC_PREFIX}/bin:${PATH}"
 
 # GNU (binutils, GCC + dependencies) and Sourceware (newlib) URLs. You can
@@ -30,6 +31,14 @@ export GCC_BASE_URL="ftp://gcc.gnu.org/pub/gcc"
 # a later version, do not edit these options.
 export BINUTILS_VERSION="2.25"
 
+# Kernel headers are required for glibc
+# Generally it is best to choose the latest stable release
+export KERNEL_VERSION_MAJOR="4"
+export KERNEL_VERSION_MINOR="0.3"
+export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
+
+export GLIBC_VERSION="2.21"
+
 # The GCC version number should be in the same minor series as your host
 # compiler. For example, if your host has GCC 4.9.1, you can probably set
 # GCC_VERSION to the latest version of the 4.9.x series, but you should not
@@ -43,17 +52,11 @@ export MPC_VERSION="1.0.3"
 export GMP_VERSION="6.0.0"
 export GMP_VERSION_MINOR="a"
 
-export ISL_VERSION="0.14"
-
+export ISL_VERSION="0.12.2"
 export CLOOG_VERSION="0.18.1"
 
-export NEWLIB_VERSION="2.2.0-1"
-
-export KERNEL_VERSION_MAJOR="4"
-export KERNEL_VERSION_MINOR="0.3"
-export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
-
 export GLOBAL_CONFIGURE_OPTIONS=(
+  "--target=${XC_TARGET}"
   "--disable-multilib"
   "--disable-werror"
   "--disable-threads"
@@ -68,7 +71,6 @@ export BINUTILS_SRC_DIR="${XC_TMP_DIR}/binutils-${BINUTILS_VERSION}"
 export BINUTILS_BUILD_DIR="${XC_TMP_DIR}/build-binutils"
 export BINUTILS_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
-  "--target=${XC_TARGET}"
 )
 
 BINUTILS_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
@@ -79,9 +81,24 @@ export KERNEL_TARBALL="${XC_TMP_DIR}/${KERNEL_FILENAME}"
 export KERNEL_SRC_DIR="${XC_TMP_DIR}/linux-${KERNEL_VERSION}"
 export KERNEL_MAKE_OPTIONS=(
   "ARCH=${XC_KERNEL_TARGET}"
-  "INSTALL_HDR_PATH=${XC_PREFIX}"
+  "INSTALL_HDR_PATH=${XC_HEADER_DIR}"
   "headers_install"
 )
+
+export GLIBC_FILENAME="glibc-${GLIBC_VERSION}.tar.xz"
+export GLIBC_URL="${GNU_BASE_URL}/glibc/${GLIBC_FILENAME}"
+export GLIBC_TARBALL="${XC_TMP_DIR}/${GLIBC_FILENAME}"
+export GLIBC_SRC_DIR="${XC_TMP_DIR}/glibc-${GLIBC_VERSION}"
+export GLIBC_BUILD_DIR="${XC_TMP_DIR}/build-glibc"
+export GLIBC_CONFIGURE_OPTIONS=(
+  "--prefix=${XC_HEADER_DIR}"
+  "--build=${MACHTYPE}"
+  "--host=${XC_TARGET}"
+  "--with-headers=${XC_HEADER_DIR}/include"
+  "libc_cv_forced_unwind=yes"
+)
+
+GLIBC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
 
 export GCC_FILENAME="gcc-${GCC_VERSION}.tar.gz"
 export GCC_URL="${GNU_BASE_URL}/gcc/gcc-${GCC_VERSION}/${GCC_FILENAME}"
@@ -91,9 +108,7 @@ export GCC_BUILD_DIR="${XC_TMP_DIR}/build-gcc"
 
 export GCC_CONFIGURE_OPTIONS=(
   "--prefix=${XC_PREFIX}"
-  "--target=${XC_TARGET}"
   "--enable-languages=${GCC_LANGS}"
-  "--with-newlib"
 )
 
 GCC_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
@@ -122,15 +137,3 @@ export CLOOG_FILENAME="cloog-${CLOOG_VERSION}.tar.gz"
 export CLOOG_URL="${GCC_BASE_URL}/infrastructure/${CLOOG_FILENAME}"
 export CLOOG_TARBALL="${XC_TMP_DIR}/${CLOOG_FILENAME}"
 export CLOOG_SRC_DIR="${XC_TMP_DIR}/cloog-${CLOOG_VERSION}"
-
-export NEWLIB_FILENAME="newlib-${NEWLIB_VERSION}.tar.gz"
-export NEWLIB_URL="${SOURCEWARE_BASE_URL}/newlib/${NEWLIB_FILENAME}"
-export NEWLIB_TARBALL="${XC_TMP_DIR}/${NEWLIB_FILENAME}"
-export NEWLIB_SRC_DIR="${XC_TMP_DIR}/newlib-${NEWLIB_VERSION}"
-export NEWLIB_BUILD_DIR="${XC_TMP_DIR}/build-newlib"
-export NEWLIB_CONFIGURE_OPTIONS=(
-  "--prefix=${XC_PREFIX}"
-  "--target=${XC_TARGET}"
-)
-
-NEWLIB_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
