@@ -160,7 +160,7 @@ fi
 mkdir ${GCC_BUILD_DIR}
 
 cd ${GCC_BUILD_DIR}
-${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]} --without-headers
 make all-gcc
 make install-gcc
 
@@ -179,5 +179,6 @@ make install
 
 # Build and install GCC (third pass)
 cd ${GCC_BUILD_DIR}
+${GCC_SRC_DIR}/configure ${GCC_CONFIGURE_OPTIONS[*]}
 make all
 make install

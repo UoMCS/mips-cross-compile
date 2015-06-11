@@ -51,11 +51,9 @@ export CLOOG_VERSION="0.18.1"
 
 export GLOBAL_CONFIGURE_OPTIONS=(
   "--target=${XC_TARGET}"
-  "--disable-multilib"
   "--disable-werror"
   "--disable-threads"
   "--disable-shared"
-  "--disable-nls"
 )
 
 # You should not need to edit any of the following variables unless the build
@@ -77,7 +75,7 @@ export NEWLIB_TARBALL="${XC_TMP_DIR}/${NEWLIB_FILENAME}"
 export NEWLIB_SRC_DIR="${XC_TMP_DIR}/newlib-${NEWLIB_VERSION}"
 export NEWLIB_BUILD_DIR="${XC_TMP_DIR}/build-newlib"
 export NEWLIB_CONFIGURE_OPTIONS=(
-  "--prefix=${XC_HEADER_DIR}"
+  "--prefix=${XC_PREFIX}"
 )
 
 NEWLIB_CONFIGURE_OPTIONS+=(${GLOBAL_CONFIGURE_OPTIONS[*]})
