@@ -4,6 +4,9 @@
 # may need all parts of the triplet (e.g. for a Raspberry Pi you should set
 # XC_TARGET to "arm-unknown-linux-gnueabihf").
 export XC_TARGET="mips-linux"
+
+# Kernel target architecture. The kernel has slightly different names for its
+# targets, e.g. for a RPi you shoud set this to "arm"
 export XC_KERNEL_TARGET="mips"
 
 # Prefix to use for downloading and building the toolchain, as well as the
@@ -12,7 +15,7 @@ export XC_KERNEL_TARGET="mips"
 # due to the binutils makefiles and nothing to do with this build script).
 # Do not specify an existing directory for the prefix as it will be deleted
 # each time you do a full rebuild.
-export XC_PREFIX="${HOME}/xc"
+export XC_PREFIX="${PWD}/xc-${XC_TARGET}"
 
 # Don't edit these configuration variables.
 export XC_TMP_DIR="${XC_PREFIX}/${XC_TARGET}/tmp"
@@ -29,30 +32,30 @@ export GCC_BASE_URL="ftp://gcc.gnu.org/pub/gcc"
 # Version numbers for the relevant components of the toolchain. Not all
 # version combinations have been tested. Unless you need a feature in
 # a later version, do not edit these options.
-export BINUTILS_VERSION="2.25"
+export BINUTILS_VERSION="2.26"
 
 # Kernel headers are required for glibc
 # Generally it is best to choose the latest stable release
 export KERNEL_VERSION_MAJOR="4"
-export KERNEL_VERSION_MINOR="0.3"
+export KERNEL_VERSION_MINOR="4.5"
 export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
 
-export GLIBC_VERSION="2.21"
+export GLIBC_VERSION="2.23"
 
 # The GCC version number should be in the same minor series as your host
 # compiler. For example, if your host has GCC 4.9.1, you can probably set
 # GCC_VERSION to the latest version of the 4.9.x series, but you should not
 # set it to 5.x.
-export GCC_VERSION="4.9.2"
+export GCC_VERSION="5.3.0"
 export GCC_LANGS="c,c++"
 
-export MPFR_VERSION="3.1.2"
+export MPFR_VERSION="3.1.3"
 export MPC_VERSION="1.0.3"
 
-export GMP_VERSION="6.0.0"
-export GMP_VERSION_MINOR="a"
+export GMP_VERSION="6.1.0"
+export GMP_VERSION_MINOR=""
 
-export ISL_VERSION="0.12.2"
+export ISL_VERSION="0.15"
 export CLOOG_VERSION="0.18.1"
 
 export GLOBAL_CONFIGURE_OPTIONS=(
