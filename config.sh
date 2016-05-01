@@ -37,7 +37,7 @@ export BINUTILS_VERSION="2.26"
 # Kernel headers are required for glibc
 # Generally it is best to choose the latest stable release
 export KERNEL_VERSION_MAJOR="4"
-export KERNEL_VERSION_MINOR="4.5"
+export KERNEL_VERSION_MINOR="5.2"
 export KERNEL_VERSION="${KERNEL_VERSION_MAJOR}.${KERNEL_VERSION_MINOR}"
 
 export GLIBC_VERSION="2.23"
@@ -49,13 +49,13 @@ export GLIBC_VERSION="2.23"
 export GCC_VERSION="5.3.0"
 export GCC_LANGS="c,c++"
 
-export MPFR_VERSION="3.1.3"
+export MPFR_VERSION="3.1.4"
 export MPC_VERSION="1.0.3"
 
 export GMP_VERSION="6.1.0"
 export GMP_VERSION_MINOR=""
 
-export ISL_VERSION="0.15"
+export ISL_VERSION="0.16.1"
 export CLOOG_VERSION="0.18.1"
 
 export GLOBAL_CONFIGURE_OPTIONS=(
